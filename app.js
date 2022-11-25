@@ -3,15 +3,24 @@ const app = express();
 const { products } = require("./data");
 app.get("/", (req, res) => {
   // res.json(products);
-  res.send('<a href="/products">products</a>');
+  res.send(
+    '<a href="/products/1">PRODUCT 1</a><br/><a href="/products/2">PRODUCT 2</a><br/><a href="/products/3">PRODUCT 3</a><br/>'
+  );
 });
 
-app.get("/products", (req, res) => {
-  const newProducts = products.map((product) => {
-    const { id, image, name } = product;
-    return { id, image, name };
-  });
-  res.json(newProducts);
+app.get("/products/:productId", (req, res) => {
+  const { productId } = req.params;
+
+  const newProduct = products.find(
+    (product) => product.id === Number(productId)
+  );
+
+  if (!newProduct) res.status(404).send("Not FOUND");
+  res.json(newProduct);
+});
+
+app.all("*", (req, res) => {
+  res.status(404).send("Not FOUND");
 });
 
 app.listen(5000, () => {
