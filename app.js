@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 const { products } = require("./data");
+
 app.get("/", (req, res) => {
-  // res.json(products);
   res.send(
     '<a href="/products/1">PRODUCT 1</a><br/><a href="/products/2">PRODUCT 2</a><br/><a href="/products/3">PRODUCT 3</a><br/>'
   );
@@ -17,6 +17,27 @@ app.get("/products/:productId", (req, res) => {
 
   if (!newProduct) res.status(404).send("Not FOUND");
   res.json(newProduct);
+});
+
+app.get("/api/v1/query", (req, res) => {
+  const { search, limit } = req.query;
+  let allProducts = [...products];
+  if (search) {
+    allProducts = allProducts.filter((product) =>
+      product.name.startsWith(search)
+    );
+  }
+
+  if (limit) {
+    allProducts = allProducts.slice(0, Number(limit));
+  }
+
+  if (allProducts.length < 1) {
+    // res.send("<h1>No product found");
+    return res.status(200).json({ success: true, data: [] });
+  }
+
+  res.status(200).json(allProducts);
 });
 
 app.all("*", (req, res) => {
