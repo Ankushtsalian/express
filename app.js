@@ -2,7 +2,9 @@ const express = require("express");
 const app = express();
 const logger = require("./logger");
 
-app.get("/", logger, (req, res) => {
+app.use("/api", logger);
+
+app.get("/", (req, res) => {
   res.send("Home");
 });
 
