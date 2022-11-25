@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 
-const server = app.get("/", (req, res) => {
-  res.end("helloWORLD");
+app.get("/", (req, res) => {
+  res.end("helloLD");
 });
 
-server.listen(5000, () => console.log("start"));
+app.listen(5000, () => console.log("start"));
