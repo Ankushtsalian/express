@@ -20,7 +20,7 @@ app.get("/products/:productId", (req, res) => {
 });
 
 app.all("*", (req, res) => {
-  res.status(404).send("Not FOUND");
+  res.status(404).send("Not Found");
 });
 
 app.listen(5000, () => {
