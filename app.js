@@ -1,8 +1,9 @@
 const express = require("express");
 const app = express();
 const { products } = require("./data");
+const logger = require("./logger");
 
-app.use((req, res, next) => {
+app.use("/api", logger, (req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
 });
@@ -27,20 +28,35 @@ app.get("/api/products/product/:productId", (req, res) => {
 });
 
 app.get("/api/products/query", (req, res) => {
-  const { search, limit } = req.query;
+  const { search, limit, sortBy } = req.query;
   let filteredProducts = [...products];
 
   if (search) {
     filteredProducts = filteredProducts.filter((product) =>
-      product.name.startsWith(search)
+      product.name.includes(search)
     );
   }
   if (limit) {
     filteredProducts = filteredProducts.slice(0, limit);
   }
+  const compare = (a, b) => {
+    if (a.name < b.name) {
+      return -1;
+    }
+    if (a.name > b.name) {
+      return 1;
+    }
+    return 0;
+  };
+  if (sortBy === "a to z") {
+    filteredProducts = filteredProducts.sort(compare);
+    console.log(filteredProducts);
+  } else if (sortBy === "z to a") {
+    filteredProducts = filteredProducts.sort(compare);
+    filteredProducts = filteredProducts.reverse();
+  }
   return res.json(filteredProducts);
 });
-
 app.all("*", (req, res) => {
   res
     .status(404)
