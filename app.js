@@ -1,62 +1,31 @@
 const express = require("express");
 const app = express();
-const { products } = require("./data");
-const logger = require("./logger");
+const { people } = require("./data");
+var cors = require("cors");
+app.use(express.urlencoded({ extended: false }));
+app.use(cors());
+app.use(express.json());
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   next();
+// });
 
-app.use("/api", logger, (req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  next();
-});
+// app.use(express.static("./methods-public"));
 
 app.get("/", (req, res) => {
-  res.send(
-    "<ol><li><a href='/api/products/product/1'>product1</a></li><li><a href='/api/products/product/2'>product2</a></li><li><a href='/api/products/product/3'>product3</a></li><li><a href='/api/products/product/4'>product4</a></li></ol>"
-  );
+  res.json(people);
 });
 
-app.get("/api/products/", (req, res) => {
-  res.json(products);
-});
-
-app.get("/api/products/product/:productId", (req, res) => {
-  const { productId } = req.params;
-  const newProduct = products.filter(
-    (product) => product.id === Number(productId)
-  );
-
-  res.json(newProduct);
-});
-
-app.get("/api/products/query", (req, res) => {
-  const { search, limit, sortBy } = req.query;
-  let filteredProducts = [...products];
-
-  if (search) {
-    filteredProducts = filteredProducts.filter((product) =>
-      product.name.includes(search)
-    );
+app.post("/login", (req, res) => {
+  const { name } = req.body;
+  console.log(req.body);
+  if (name) {
+    return res.status(201).send(`Welcome ${name}`);
   }
-  if (limit) {
-    filteredProducts = filteredProducts.slice(0, limit);
-  }
-  const compare = (a, b) => {
-    if (a.name < b.name) {
-      return -1;
-    }
-    if (a.name > b.name) {
-      return 1;
-    }
-    return 0;
-  };
-  if (sortBy === "a to z") {
-    filteredProducts = filteredProducts.sort(compare);
-    console.log(filteredProducts);
-  } else if (sortBy === "z to a") {
-    filteredProducts = filteredProducts.sort(compare);
-    filteredProducts = filteredProducts.reverse();
-  }
-  return res.json(filteredProducts);
+
+  res.status(401).send("Please Provide Credentials");
 });
+
 app.all("*", (req, res) => {
   res
     .status(404)
