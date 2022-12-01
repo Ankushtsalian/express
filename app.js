@@ -1,15 +1,21 @@
 const express = require("express");
 const app = express();
-let { people } = require("./data");
+const People = require("./Router/People");
 var cors = require("cors");
-const post = require("./post");
-const put = require("./put");
-const deleteMethod = require("./delete");
 const unAuthRoute = require("./unAuthRoute");
-
+// let { people } = require("./data");
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(express.json());
+
+let people = [
+  { id: 1, name: "john" },
+  { id: 2, name: "peter" },
+  { id: 3, name: "susan" },
+  { id: 4, name: "anna" },
+  { id: 5, name: "emma" },
+];
+app.use("/login/person", People);
 // app.use((req, res, next) => {
 //   res.header("Access-Control-Allow-Origin", "*");
 //   next();
@@ -20,23 +26,75 @@ app.get("/", (req, res) => {
   res.json(people);
 });
 
-app.post("/login", post);
+app.post("/login", (req, res) => {
+  const { name } = req.body;
 
-app.put("/login/person/query", put);
+  const searchPerson = people.find((person) => person.name === name);
 
-app.delete("/login/person/:id", (req, res) => {
-  const { id } = req.params;
-  const searchPersonWithId = people.find((person) => person.id === Number(id));
-  if (!searchPersonWithId) {
+  if (name && searchPerson) {
     return res
-      .status(401)
-      .json({ success: false, data: `No data found with id ${id} to delete` });
+      .status(400)
+      .send(`Name: ${name}" already present cannot add new person to the list`);
   }
 
-  people = people.filter((person) => person.id !== Number(id));
+  if (name && !searchPerson) {
+    const peopleLength = people.length;
+    let finalId = people.slice(peopleLength - 1);
+    const newId = finalId[0].id + 1;
+    people.push({ id: Number(newId), name });
 
-  return res.status(200).json({ success: true, data: people });
+    return res.status(201).json(people);
+  }
+
+  res.status(401).send("Please Provide Credentials");
 });
+
+// app.put("/login/person/query", (req, res) => {
+//   const { name } = req.body;
+//   const { id, newName } = req.query;
+//   let newPeople;
+//   const searchPersonWithId = people.find((person) => person.id === Number(id));
+//   const searchPersonWithName = people.find(
+//     (person) => person.name.toLowerCase() === newName.toLowerCase()
+//   );
+
+//   if (!newName) return res.status(401).send("Please Edit value");
+//   if (newName && searchPersonWithName) {
+//     return res
+//       .status(400)
+//       .send(`Name: ${name}" already present cannot add new person to the list`);
+//   }
+//   if (newName && searchPersonWithId) {
+//     newPeople = people.map((person) => {
+//       if (person.id === Number(id)) {
+//         person.name = newName;
+//         return person;
+//       }
+//       return person;
+//     });
+//     console.log(people);
+//     return res.status(200).json({ success: true, data: newPeople });
+//   }
+
+//   if (!searchPersonWithId) {
+//     return res.status(401).json({ success: false, data: "No data" });
+//   }
+//   // console.log({ name, id, searchPersonWithId, newPeople });
+// });
+
+// app.delete("/login/person/:id", (req, res) => {
+//   const { id } = req.params;
+//   const searchPersonWithId = people.find((person) => person.id === Number(id));
+//   if (!searchPersonWithId) {
+//     return res
+//       .status(401)
+//       .json({ success: false, data: `No data found with id ${id} to delete` });
+//   }
+
+//   people = people.filter((person) => person.id !== Number(id));
+
+//   return res.status(200).json({ success: true, data: people });
+// });
 
 app.all("*", unAuthRoute);
 
