@@ -7,12 +7,14 @@ const {
   deletePeople,
 } = require("../controlers/people");
 
-router.get("/", getPeople);
+// router.get("/", getPeople);
 
-router.post("/", createPeople);
+// router.post("/", createPeople);
 
 router.put("/query", addPeople);
 
 router.delete("/:id", deletePeople);
+
+router.route("/").get(getPeople).post(createPeople);
 
 module.exports = router;
