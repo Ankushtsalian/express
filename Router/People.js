@@ -1,13 +1,33 @@
 const express = require("express");
 const router = express.Router();
-// let { people } = require("../data");
-let people = [
-  { id: 1, name: "john" },
-  { id: 2, name: "peter" },
-  { id: 3, name: "susan" },
-  { id: 4, name: "anna" },
-  { id: 5, name: "emma" },
-];
+let { people } = require("../data");
+
+router.get("/", (req, res) => {
+  res.json(people);
+});
+
+router.post("/", (req, res) => {
+  const { name } = req.body;
+
+  const searchPerson = people.find((person) => person.name === name);
+
+  if (name && searchPerson) {
+    return res
+      .status(400)
+      .send(`Name: ${name}" already present cannot add new person to the list`);
+  }
+
+  if (name && !searchPerson) {
+    const peopleLength = people.length;
+    let finalId = people.slice(peopleLength - 1);
+    const newId = finalId[0].id + 1;
+    people.push({ id: Number(newId), name });
+
+    return res.status(201).json(people);
+  }
+
+  res.status(401).send("Please Provide Credentials");
+});
 
 router.put("/query", (req, res) => {
   const { name } = req.body;

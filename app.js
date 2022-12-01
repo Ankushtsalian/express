@@ -22,32 +22,32 @@ app.use("/login/person", People);
 // });
 // app.use(express.static("./methods-public"));
 
-app.get("/", (req, res) => {
-  res.json(people);
-});
+// app.get("/login/person", (req, res) => {
+//   res.json(people);
+// });
 
-app.post("/login", (req, res) => {
-  const { name } = req.body;
+// app.post("/login/person", (req, res) => {
+//   const { name } = req.body;
 
-  const searchPerson = people.find((person) => person.name === name);
+//   const searchPerson = people.find((person) => person.name === name);
 
-  if (name && searchPerson) {
-    return res
-      .status(400)
-      .send(`Name: ${name}" already present cannot add new person to the list`);
-  }
+//   if (name && searchPerson) {
+//     return res
+//       .status(400)
+//       .send(`Name: ${name}" already present cannot add new person to the list`);
+//   }
 
-  if (name && !searchPerson) {
-    const peopleLength = people.length;
-    let finalId = people.slice(peopleLength - 1);
-    const newId = finalId[0].id + 1;
-    people.push({ id: Number(newId), name });
+//   if (name && !searchPerson) {
+//     const peopleLength = people.length;
+//     let finalId = people.slice(peopleLength - 1);
+//     const newId = finalId[0].id + 1;
+//     people.push({ id: Number(newId), name });
 
-    return res.status(201).json(people);
-  }
+//     return res.status(201).json(people);
+//   }
 
-  res.status(401).send("Please Provide Credentials");
-});
+//   res.status(401).send("Please Provide Credentials");
+// });
 
 // app.put("/login/person/query", (req, res) => {
 //   const { name } = req.body;
