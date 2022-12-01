@@ -43,17 +43,28 @@ app.put("/login/person/query", (req, res) => {
   const { id, newName } = req.query;
   let newPeople;
   const searchPersonWithId = people.find((person) => person.id === Number(id));
-  if (searchPersonWithId) {
+  const searchPersonWithName = people.find(
+    (person) => person.name.toLowerCase() === newName.toLowerCase()
+  );
+
+  if (!newName) return res.status(401).send("Please Edit value");
+  if (newName && searchPersonWithName) {
+    return res
+      .status(400)
+      .send(`Name: ${name}" already present cannot add new person to the list`);
+  }
+  if (newName && searchPersonWithId) {
     newPeople = people.map((person) => {
       if (person.id === Number(id)) {
-        person.name = name;
+        person.name = newName;
         return person;
       }
       return person;
     });
-    console.log(newName);
-    return res.status(200).json({ success: true, data: searchPersonWithId });
+    console.log(people);
+    return res.status(200).json({ success: true, data: newPeople });
   }
+
   if (!searchPersonWithId) {
     return res.status(401).json({ success: false, data: searchPersonWithId });
   }
