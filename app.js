@@ -3,18 +3,10 @@ const app = express();
 const People = require("./Router/People");
 var cors = require("cors");
 const unAuthRoute = require("./unAuthRoute");
-// let { people } = require("./data");
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(express.json());
 
-let people = [
-  { id: 1, name: "john" },
-  { id: 2, name: "peter" },
-  { id: 3, name: "susan" },
-  { id: 4, name: "anna" },
-  { id: 5, name: "emma" },
-];
 app.use("/login/person", People);
 // app.use((req, res, next) => {
 //   res.header("Access-Control-Allow-Origin", "*");
