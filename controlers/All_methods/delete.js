@@ -1,4 +1,4 @@
-let { people } = require("./data");
+let { people } = require("../../data");
 
 const deleteMethod = (req, res) => {
   const { id } = req.params;

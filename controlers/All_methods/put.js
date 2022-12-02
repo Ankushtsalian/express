@@ -1,4 +1,4 @@
-let { people } = require("./data");
+let { people } = require("../../data");
 
 const put = (req, res) => {
   const { name } = req.body;
